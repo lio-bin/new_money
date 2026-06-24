@@ -56,10 +56,91 @@
         }
         
         @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
+    .dashboard {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .container {
+        padding: 0 10px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    /* 表格在手机上改为卡片式布局 */
+    .distribution-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .distribution-table table {
+        min-width: 600px;
+        font-size: 0.85rem;
+    }
+
+    .distribution-table th,
+    .distribution-table td {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+    }
+
+    .percentage-input {
+        width: 60px;
+        padding: 6px 4px;
+        font-size: 0.85rem;
+    }
+
+    .project-input,
+    .detail-input {
+        font-size: 0.8rem;
+        padding: 5px 6px;
+    }
+
+    .amount-cell {
+        font-size: 0.9rem;
+        min-width: 80px;
+    }
+
+    .chart-container {
+        height: 220px;
+    }
+
+    .total-input {
+        font-size: 1.4rem;
+        padding: 12px 12px 12px 40px;
+    }
+
+    .capital-amount {
+        font-size: 1rem;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .summary-total,
+    .percentage-total {
+        font-size: 1rem;
+    }
+
+    .validation-item {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+    }
+}
         
         .card {
             background: white;
