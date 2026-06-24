@@ -1,0 +1,1149 @@
+资金占比
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态资金分配管理</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .card-header h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-left: 10px;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .icon-total {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .icon-pie {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .total-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+        
+        .total-input-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 15px 0;
+        }
+        
+        .currency-symbol {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #3498db;
+        }
+        
+        .total-input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: right;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            color: #3498db;
+            transition: all 0.3s ease;
+        }
+        
+        .total-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .total-label {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+        
+        .capital-amount-container {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+            background: linear-gradient(135deg, #fff9e6, #fff0cc);
+            border-radius: 10px;
+            padding: 15px 20px;
+            border: 2px solid #ffd966;
+            box-shadow: 0 4px 10px rgba(255, 204, 0, 0.1);
+        }
+        
+        .capital-title {
+            color: #d35400;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .capital-title i {
+            margin-right: 8px;
+        }
+        
+        .capital-amount {
+            color: #e67e22;
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1.5;
+            text-align: center;
+            letter-spacing: 2px;
+            font-family: 'SimSun', '宋体', serif;
+        }
+        
+        .distribution-table {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .distribution-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .distribution-table th {
+            text-align: left;
+            padding: 15px 10px;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .distribution-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .distribution-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .distribution-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .percentage-cell, .amount-cell {
+            font-weight: 600;
+        }
+        
+        .percentage-input {
+            width: 80px;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: right;
+            font-weight: 600;
+            color: #9b59b6;
+            transition: all 0.2s ease;
+        }
+        
+        .percentage-input:focus {
+            outline: none;
+            border-color: #9b59b6;
+            box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.2);
+        }
+        
+        .percentage-badge {
+            display: inline-block;
+            background-color: #f0e6f5;
+            color: #9b59b6;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-left: 5px;
+        }
+        
+        .amount-cell {
+            color: #27ae60;
+            font-size: 1.1rem;
+            min-width: 120px;
+        }
+        
+        .project-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #2c3e50;
+            transition: all 0.2s ease;
+        }
+        
+        .project-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .detail-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            color: #7f8c8d;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .detail-input:focus {
+            outline: none;
+            border-color: #7f8c8d;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .summary-row {
+            background-color: #f8f9fa !important;
+            font-weight: 700;
+        }
+        
+        .percentage-total {
+            font-size: 1.2rem;
+            color: #9b59b6;
+        }
+        
+        .percentage-total.error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .summary-total {
+            color: #27ae60;
+            font-size: 1.2rem;
+        }
+        
+        .summary-total.error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2980b9, #1c6ea4);
+            box-shadow: 0 5px 15px rgba(41, 128, 185, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .btn-icon {
+            margin-right: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #95a5a6;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .formula-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        
+        .formula {
+            font-family: monospace;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            margin: 0 5px;
+        }
+        
+        .highlight {
+            background-color: #fff9e6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .validation-message {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .validation-success {
+            background-color: #d5f4e6;
+            color: #27ae60;
+            border: 1px solid #a3e4b9;
+        }
+        
+        .validation-error {
+            background-color: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #f1948a;
+        }
+        
+        .percentage-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .percentage-sum {
+            font-weight: 600;
+            color: #9b59b6;
+            font-size: 1.1rem;
+        }
+        
+        .percentage-sum .sum-value {
+            background-color: #f0e6f5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-left: 5px;
+        }
+        
+        .percentage-sum.error {
+            color: #e74c3c;
+        }
+        
+        .percentage-sum.error .sum-value {
+            background-color: #fadbd8;
+            font-weight: bold;
+        }
+        
+        .percent-symbol {
+            margin-left: 2px;
+            color: #9b59b6;
+            font-weight: 600;
+        }
+        
+        .percentage-input-with-symbol {
+            display: flex;
+            align-items: center;
+        }
+        
+        .percentage-input-wrapper {
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .amount-difference {
+            font-size: 0.9rem;
+            margin-left: 5px;
+        }
+        
+        .amount-difference.positive {
+            color: #e74c3c;
+        }
+        
+        .amount-difference.negative {
+            color: #27ae60;
+        }
+        
+        .validation-section {
+            margin-top: 15px;
+        }
+        
+        .validation-item {
+            padding: 8px 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .validation-item.success {
+            background-color: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .validation-item.error {
+            background-color: #fadbd8;
+            color: #e74c3c;
+        }
+        
+        .validation-icon {
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>动态资金分配管理</h1>
+            <p class="subtitle">使用整数百分比(0-100)表示占比，数值自动计算；项目名称和明细可自由编辑</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-total">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h2>总金额控制</h2>
+                </div>
+                
+                <div class="total-control">
+                    <div class="total-label">请输入可用总金额</div>
+                    <div class="total-input-container">
+                        <span class="currency-symbol">¥</span>
+                        <input type="number" id="totalAmount" class="total-input" value="7469" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="capital-amount-container">
+                        <div class="capital-title">
+                            <i class="fas fa-file-invoice-dollar"></i> 大写金额
+                        </div>
+                        <div id="capitalAmount" class="capital-amount">柒仟肆佰陆拾玖元整</div>
+                    </div>
+                    
+                    <div class="total-label">修改后，下方数值将自动重新计算</div>
+                </div>
+                
+                <div class="formula-info">
+                    <p><i class="fas fa-calculator"></i> <strong>计算公式：</strong> 数值 = 总金额 × (占比 ÷ 100)</p>
+                    <p>修改总金额或任意占比，数值列将自动更新</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-pie">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h2>分配比例概览</h2>
+                </div>
+                
+                <div class="percentage-controls">
+                    <div>占比总和必须为100%</div>
+                    <div id="percentageSum" class="percentage-sum">
+                        当前总和: <span class="sum-value">100%</span>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+                
+                <div class="validation-section">
+                    <div id="percentageValidation" class="validation-item success">
+                        <i class="fas fa-check-circle validation-icon"></i>
+                        <span>占比总和为100%，符合要求</span>
+                    </div>
+                    <div id="amountValidation" class="validation-item success">
+                        <i class="fas fa-check-circle validation-icon"></i>
+                        <span>数值总和等于总金额：¥7,469.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                    <i class="fas fa-table"></i>
+                </div>
+                <h2>资金分配详情 (共10行)</h2>
+            </div>
+            
+            <div class="distribution-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="15%">占比 % (可编辑)</th>
+                            <th width="20%">项目名称 (可编辑)</th>
+                            <th width="40%">项目明细 (可编辑)</th>
+                            <th width="25%">数值 (自动计算)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="distributionTableBody">
+                        <!-- 表格行将通过JavaScript动态生成 -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="summary-row">
+                            <td id="percentageTotalCell" class="percentage-total">100%</td>
+                            <td><strong>总计</strong></td>
+                            <td>所有项目金额总和</td>
+                            <td id="totalAmountCell" class="summary-total">
+                                ¥<span id="totalCalculated">7,469.00</span>
+                                <span id="amountDifference" class="amount-difference"></span>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <div class="controls">
+                <button id="resetBtn" class="btn btn-secondary">
+                    <i class="fas fa-redo btn-icon"></i> 重置为默认值
+                </button>
+                <button id="recalculateBtn" class="btn btn-primary">
+                    <i class="fas fa-calculator btn-icon"></i> 重新计算所有数值
+                </button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>动态资金分配管理系统 &copy; 2023 | 数值 = 总金额 × (占比 ÷ 100)</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // 初始化数据 - 10行数据
+        // 注意：这里存储的是整数百分比（0-100），而不是小数
+        const defaultData = [
+            { percentage: 50, project: "专项支出", details: "房贷、车贷、水电、物业、电话（每月固定项目）" },
+            { percentage: 25, project: "固定存款", details: "理财、投资" },
+            { percentage: 10, project: "快乐资金", details: "周末出去玩聚会" },
+            { percentage: 15, project: "零花钱", details: "日常零花、超市、蔬菜、油米面" },
+            { percentage: 0, project: "其他支出", details: "其他未分类支出" },
+            { percentage: 0, project: "应急资金", details: "应急备用金" },
+            { percentage: 0, project: "学习投资", details: "书籍、课程、培训" },
+            { percentage: 0, project: "健康投资", details: "健身、医疗、保险" },
+            { percentage: 0, project: "娱乐消费", details: "电影、游戏、订阅服务" },
+            { percentage: 0, project: "慈善捐赠", details: "捐款、公益项目" }
+        ];
+
+        let currentData = JSON.parse(JSON.stringify(defaultData));
+        let totalAmount = 7469;
+        let distributionChart = null;
+
+        // DOM元素
+        const totalAmountInput = document.getElementById('totalAmount');
+        const distributionTableBody = document.getElementById('distributionTableBody');
+        const totalCalculatedElement = document.getElementById('totalCalculated');
+        const percentageSumElement = document.getElementById('percentageSum');
+        const resetBtn = document.getElementById('resetBtn');
+        const recalculateBtn = document.getElementById('recalculateBtn');
+        const percentageValidation = document.getElementById('percentageValidation');
+        const amountValidation = document.getElementById('amountValidation');
+        const percentageTotalCell = document.getElementById('percentageTotalCell');
+        const totalAmountCell = document.getElementById('totalAmountCell');
+        const amountDifference = document.getElementById('amountDifference');
+        const capitalAmountElement = document.getElementById('capitalAmount');
+
+        // 中文大写数字映射
+        const chineseNumbers = {
+            '0': '零',
+            '1': '壹',
+            '2': '贰',
+            '3': '叁',
+            '4': '肆',
+            '5': '伍',
+            '6': '陆',
+            '7': '柒',
+            '8': '捌',
+            '9': '玖'
+        };
+
+        // 中文单位映射
+        const chineseUnits = {
+            'ten': '拾',
+            'hundred': '佰',
+            'thousand': '仟',
+            'tenThousand': '万',
+            'billion': '亿',
+            'yuan': '元',
+            'jiao': '角',
+            'fen': '分',
+            'zheng': '整'
+        };
+
+        // 将数字转换为中文大写金额
+        function convertToChineseCapital(amount) {
+            // 如果金额为0或空，返回空字符串
+            if (!amount || amount === 0) {
+                return '零元整';
+            }
+            
+            // 将金额转换为字符串，保留两位小数
+            let amountStr = parseFloat(amount).toFixed(2);
+            
+            // 分割整数部分和小数部分
+            let parts = amountStr.split('.');
+            let integerPart = parts[0];
+            let decimalPart = parts[1] || '00';
+            
+            // 处理整数部分
+            let integerResult = '';
+            let integerLen = integerPart.length;
+            
+            // 如果整数部分为0，则整数部分为空
+            if (integerPart === '0') {
+                integerResult = '';
+            } else {
+                // 将整数部分每4位分为一组
+                let groups = [];
+                let temp = integerPart;
+                while (temp.length > 4) {
+                    groups.unshift(temp.slice(-4));
+                    temp = temp.slice(0, -4);
+                }
+                groups.unshift(temp);
+                
+                // 处理每一组
+                for (let i = 0; i < groups.length; i++) {
+                    let group = groups[i];
+                    let groupResult = '';
+                    
+                    // 处理千位
+                    if (group.length === 4) {
+                        let qian = group.charAt(0);
+                        if (qian !== '0') {
+                            groupResult += chineseNumbers[qian] + chineseUnits.thousand;
+                        }
+                    }
+                    
+                    // 处理百位
+                    if (group.length >= 3) {
+                        let bai = group.charAt(group.length - 3);
+                        if (bai !== '0') {
+                            groupResult += chineseNumbers[bai] + chineseUnits.hundred;
+                        } else if (groupResult.length > 0 && groupResult.charAt(groupResult.length - 1) !== '零') {
+                            groupResult += chineseNumbers['0'];
+                        }
+                    }
+                    
+                    // 处理十位
+                    if (group.length >= 2) {
+                        let shi = group.charAt(group.length - 2);
+                        if (shi !== '0') {
+                            groupResult += chineseNumbers[shi] + chineseUnits.ten;
+                        } else if (groupResult.length > 0 && groupResult.charAt(groupResult.length - 1) !== '零') {
+                            groupResult += chineseNumbers['0'];
+                        }
+                    }
+                    
+                    // 处理个位
+                    let ge = group.charAt(group.length - 1);
+                    if (ge !== '0') {
+                        groupResult += chineseNumbers[ge];
+                    }
+                    
+                    // 去掉末尾的零
+                    if (groupResult.endsWith('零')) {
+                        groupResult = groupResult.slice(0, -1);
+                    }
+                    
+                    // 添加单位（万、亿）
+                    if (groupResult) {
+                        if (groups.length === 2 && i === 0) {
+                            groupResult += chineseUnits.tenThousand;
+                        } else if (groups.length === 3 && i === 0) {
+                            groupResult += chineseUnits.billion;
+                        } else if (groups.length === 3 && i === 1) {
+                            groupResult += chineseUnits.tenThousand;
+                        }
+                        integerResult += groupResult;
+                    }
+                }
+                
+                // 如果整数部分不为空，添加"元"
+                if (integerResult) {
+                    integerResult += chineseUnits.yuan;
+                }
+            }
+            
+            // 处理小数部分
+            let decimalResult = '';
+            let jiao = decimalPart.charAt(0);
+            let fen = decimalPart.charAt(1);
+            
+            if (jiao !== '0') {
+                decimalResult += chineseNumbers[jiao] + chineseUnits.jiao;
+            }
+            
+            if (fen !== '0') {
+                decimalResult += chineseNumbers[fen] + chineseUnits.fen;
+            }
+            
+            // 组合结果
+            let result = integerResult + decimalResult;
+            
+            // 如果结果为空（金额为0），则返回"零元整"
+            if (!result) {
+                return '零元整';
+            }
+            
+            // 如果没有小数部分或小数部分全为0，添加"整"
+            if ((jiao === '0' || !jiao) && (fen === '0' || !fen)) {
+                // 如果整数部分已经以"元"结尾，直接添加"整"
+                if (result.endsWith(chineseUnits.yuan)) {
+                    result += chineseUnits.zheng;
+                } else {
+                    // 否则添加"元整"
+                    result += chineseUnits.yuan + chineseUnits.zheng;
+                }
+            }
+            
+            // 清理连续多个"零"的情况
+            result = result.replace(/零零零/g, '零');
+            result = result.replace(/零零/g, '零');
+            
+            // 清理"零元"的情况，改为"元"
+            result = result.replace(/零元/g, '元');
+            
+            // 清理"零角"的情况
+            result = result.replace(/零角/g, '');
+            
+            // 清理"零分"的情况
+            result = result.replace(/零分/g, '');
+            
+            // 清理"元整"前面是"零"的情况
+            result = result.replace(/零元整/g, '元整');
+            
+            return result;
+        }
+
+        // 更新大写金额显示
+        function updateCapitalAmount() {
+            const capital = convertToChineseCapital(totalAmount);
+            capitalAmountElement.textContent = capital;
+        }
+
+        // 初始化表格
+        function initTable() {
+            distributionTableBody.innerHTML = '';
+            
+            currentData.forEach((item, index) => {
+                // 计算金额：总金额 × (百分比 ÷ 100)
+                const amount = totalAmount * (item.percentage / 100);
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="percentage-input-wrapper">
+                            <input type="number" 
+                                   class="percentage-input" 
+                                   data-index="${index}"
+                                   value="${item.percentage}" 
+                                   min="0" 
+                                   max="100" 
+                                   step="1">
+                            <span class="percent-symbol">%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" 
+                               class="project-input" 
+                               data-index="${index}"
+                               value="${item.project}">
+                    </td>
+                    <td>
+                        <input type="text" 
+                               class="detail-input" 
+                               data-index="${index}"
+                               value="${item.details}">
+                    </td>
+                    <td class="amount-cell">¥${amount.toFixed(2)}</td>
+                `;
+                
+                distributionTableBody.appendChild(row);
+            });
+            
+            // 添加事件监听器
+            addEventListeners();
+            updateSummary();
+            updateChart();
+            updateValidations();
+            updateCapitalAmount();
+        }
+
+        // 添加事件监听器
+        function addEventListeners() {
+            // 总金额输入事件
+            totalAmountInput.addEventListener('input', function() {
+                totalAmount = parseFloat(this.value) || 0;
+                recalculateAllAmounts();
+                updateSummary();
+                updateChart();
+                updateValidations();
+                updateCapitalAmount();
+            });
+            
+            // 占比输入事件
+            document.querySelectorAll('.percentage-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    let newValue = parseInt(this.value) || 0;
+                    
+                    // 确保值在0-100范围内
+                    if (newValue < 0) newValue = 0;
+                    if (newValue > 100) newValue = 100;
+                    this.value = newValue;
+                    
+                    // 更新数据
+                    currentData[index].percentage = newValue;
+                    
+                    // 重新计算该行金额
+                    recalculateAmount(index);
+                    
+                    // 更新总和和图表
+                    updatePercentageSum();
+                    updateSummary();
+                    updateChart();
+                    updateValidations();
+                });
+            });
+            
+            // 项目名称输入事件
+            document.querySelectorAll('.project-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    currentData[index].project = this.value;
+                    updateChart(); // 更新图表标签
+                });
+            });
+            
+            // 项目明细输入事件
+            document.querySelectorAll('.detail-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    currentData[index].details = this.value;
+                });
+            });
+        }
+
+        // 重新计算所有金额
+        function recalculateAllAmounts() {
+            document.querySelectorAll('.percentage-input').forEach((input, index) => {
+                const percentage = currentData[index].percentage;
+                // 计算金额：总金额 × (百分比 ÷ 100)
+                const amount = totalAmount * (percentage / 100);
+                const amountCell = input.closest('tr').querySelector('.amount-cell');
+                amountCell.textContent = `¥${amount.toFixed(2)}`;
+            });
+        }
+
+        // 重新计算指定行金额
+        function recalculateAmount(index) {
+            const percentage = currentData[index].percentage;
+            // 计算金额：总金额 × (百分比 ÷ 100)
+            const amount = totalAmount * (percentage / 100);
+            const row = document.querySelector(`.percentage-input[data-index="${index}"]`).closest('tr');
+            const amountCell = row.querySelector('.amount-cell');
+            amountCell.textContent = `¥${amount.toFixed(2)}`;
+        }
+
+        // 更新百分比总和显示
+        function updatePercentageSum() {
+            const totalPercentage = currentData.reduce((sum, item) => sum + item.percentage, 0);
+            
+            percentageSumElement.innerHTML = `当前总和: <span class="sum-value">${totalPercentage}%</span>`;
+            
+            // 检查总和是否为100%
+            if (totalPercentage === 100) {
+                percentageSumElement.classList.remove('error');
+            } else {
+                percentageSumElement.classList.add('error');
+            }
+        }
+
+        // 更新汇总信息
+        function updateSummary() {
+            const totalCalculated = currentData.reduce((sum, item) => {
+                // 计算金额：总金额 × (百分比 ÷ 100)
+                return sum + (totalAmount * (item.percentage / 100));
+            }, 0);
+            
+            totalCalculatedElement.textContent = totalCalculated.toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // 更新所有验证
+        function updateValidations() {
+            // 1. 检查占比总和
+            const totalPercentage = currentData.reduce((sum, item) => sum + item.percentage, 0);
+            
+            // 更新汇总行的占比总和显示
+            if (totalPercentage === 100) {
+                percentageTotalCell.textContent = "100%";
+                percentageTotalCell.classList.remove("error");
+                percentageValidation.innerHTML = '<i class="fas fa-check-circle validation-icon"></i><span>占比总和为100%，符合要求</span>';
+                percentageValidation.className = "validation-item success";
+            } else {
+                percentageTotalCell.textContent = `${totalPercentage}%`;
+                percentageTotalCell.classList.add("error");
+                
+                const diff = totalPercentage - 100;
+                const diffText = diff > 0 ? `超出${diff}%` : `不足${Math.abs(diff)}%`;
+                percentageValidation.innerHTML = `<i class="fas fa-exclamation-triangle validation-icon"></i><span>占比总和为${totalPercentage}% (${diffText})，应该为100%</span>`;
+                percentageValidation.className = "validation-item error";
+            }
+            
+            // 2. 检查数值总和是否等于总金额
+            const totalCalculated = currentData.reduce((sum, item) => {
+                return sum + (totalAmount * (item.percentage / 100));
+            }, 0);
+            
+            // 允许很小的计算误差
+            const diffAmount = totalCalculated - totalAmount;
+            const isEqual = Math.abs(diffAmount) < 0.01;
+            
+            if (isEqual) {
+                amountDifference.textContent = "";
+                totalAmountCell.classList.remove("error");
+                amountValidation.innerHTML = `<i class="fas fa-check-circle validation-icon"></i><span>数值总和等于总金额：¥${totalAmount.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
+                amountValidation.className = "validation-item success";
+            } else {
+                // 显示差额
+                if (diffAmount > 0) {
+                    amountDifference.textContent = `(+¥${diffAmount.toFixed(2)})`;
+                    amountDifference.className = "amount-difference positive";
+                } else {
+                    amountDifference.textContent = `(¥${diffAmount.toFixed(2)})`;
+                    amountDifference.className = "amount-difference negative";
+                }
+                
+                totalAmountCell.classList.add("error");
+                amountValidation.innerHTML = `<i class="fas fa-exclamation-triangle validation-icon"></i><span>数值总和为¥${totalCalculated.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}，与总金额¥${totalAmount.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}不一致，差额：${diffAmount > 0 ? '+' : ''}¥${diffAmount.toFixed(2)}</span>`;
+                amountValidation.className = "validation-item error";
+            }
+        }
+
+        // 初始化或更新图表
+        function updateChart() {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            
+            // 过滤掉占比为0的数据
+            const chartData = currentData
+                .filter(item => item.percentage > 0)
+                .map(item => ({
+                    label: `${item.project} (${item.percentage}%)`,
+                    value: totalAmount * (item.percentage / 100),
+                    percentage: item.percentage
+                }));
+            
+            const labels = chartData.map(item => item.label);
+            const values = chartData.map(item => item.value);
+            
+            const colors = [
+                'rgba(52, 152, 219, 0.8)',
+                'rgba(155, 89, 182, 0.8)',
+                'rgba(46, 204, 113, 0.8)',
+                'rgba(241, 196, 15, 0.8)',
+                'rgba(230, 126, 34, 0.8)',
+                'rgba(231, 76, 60, 0.8)',
+                'rgba(149, 165, 166, 0.8)',
+                'rgba(189, 195, 199, 0.8)',
+                'rgba(52, 73, 94, 0.8)',
+                'rgba(127, 140, 141, 0.8)'
+            ];
+            
+            // 如果图表已存在，销毁它
+            if (distributionChart) {
+                distributionChart.destroy();
+            }
+            
+            distributionChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors.slice(0, chartData.length),
+                        borderColor: colors.map(color => color.replace('0.8', '1')),
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: {
+                                    size: 13
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const percentage = (value / totalAmount * 100).toFixed(1);
+                                    return `${label}: ¥${value.toFixed(2)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 重置为默认值
+        function resetToDefault() {
+            currentData = JSON.parse(JSON.stringify(defaultData));
+            totalAmount = 7469;
+            totalAmountInput.value = totalAmount;
+            initTable();
+            updateValidations();
+        }
+
+        // 重新计算所有数值
+        function recalculateAll() {
+            recalculateAllAmounts();
+            updateSummary();
+            updateChart();
+            updateValidations();
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initTable();
+            
+            // 按钮事件
+            resetBtn.addEventListener('click', resetToDefault);
+            recalculateBtn.addEventListener('click', recalculateAll);
+        });
+    </script>
+</body>
+</html>
